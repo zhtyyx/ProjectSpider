@@ -1,7 +1,7 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, font
 
-from spider import Spider
+from spider import Spider, search_google
 
 
 # User interface class
@@ -11,7 +11,10 @@ class GUI:
 
         self.window = tk.Tk()
         self.window.title('Spider')
-        self.window.geometry('1800x600')
+        self.window.geometry('1500x800')
+        # 设置默认字体大小
+        default_font = font.nametofont("TkDefaultFont")
+        default_font.configure(size=int(default_font.cget("size") * 1.2))
 
         # PanedWindow for three modules
         paned_window = ttk.PanedWindow(self.window, orient='horizontal')
@@ -20,19 +23,24 @@ class GUI:
         # A Part: Google Spider frame
         google_spider_frame = tk.Frame(paned_window)
         paned_window.add(google_spider_frame, weight=1)
-
-        google_spider_label = tk.Label(google_spider_frame, text='Google Spider')
+        google_spider_label = tk.Label(google_spider_frame, text='Google Spider', font=('TkDefaultFont', 14, 'bold'))
         google_spider_label.pack(side='top', padx=10, pady=10)
+        # Search Word label and entry
+        search_word_label = tk.Label(google_spider_frame, text='Search Word:')
+        search_word_label.pack(side='top', padx=10, pady=10, anchor='w')
 
-        keyword_label = tk.Label(google_spider_frame, text='Keywords:')
-        keyword_label.pack(side='top', padx=10, pady=10)
+        search_word_entry = ttk.Entry(google_spider_frame, width=30)
+        search_word_entry.pack(side='top', padx=10, pady=10, anchor='w')
+
+        keyword_label = tk.Label(google_spider_frame, text='Keywords:', anchor='w')
+        keyword_label.pack(side='top', padx=10, pady=10, fill='x')
 
         # New frame for keyword entry and buttons
         keyword_entry_frame = tk.Frame(google_spider_frame)
-        keyword_entry_frame.pack(side='top', padx=10, pady=10)
+        keyword_entry_frame.pack(side='top', padx=10, pady=10, anchor='w')
 
         keyword_entry = ttk.Entry(keyword_entry_frame, width=30)
-        keyword_entry.pack(side='left', padx=10, pady=10)
+        keyword_entry.pack(side='left', padx=10, pady=10, anchor='w')
         self.keyword_entry = keyword_entry
 
         add_keyword_button = tk.Button(keyword_entry_frame, text='Add', command=self.on_add_keyword, width=10)
@@ -42,13 +50,13 @@ class GUI:
         remove_keyword_button.pack(side='left', padx=5)
 
         self.keyword_listbox = tk.Listbox(google_spider_frame, width=30)
-        self.keyword_listbox.pack(side='top', padx=10)
+        self.keyword_listbox.pack(side='top', padx=10, anchor='w')
 
-        page_label = tk.Label(google_spider_frame, text='Pages:')
-        page_label.pack(side='top', padx=10, pady=10)
+        page_label = tk.Label(google_spider_frame, text='Pages:', anchor='w')
+        page_label.pack(side='top', padx=10, pady=10, fill='x')
 
         page_entry = ttk.Entry(google_spider_frame, width=30)
-        page_entry.pack(side='top', padx=10, pady=10)
+        page_entry.pack(side='top', padx=10, pady=10, anchor='w')
         self.page_entry = page_entry
 
         run_google_button = tk.Button(google_spider_frame, text='Run Google Spider', command=self.on_start_google,
@@ -56,22 +64,26 @@ class GUI:
                                       height=2)
         run_google_button.pack(side='bottom', padx=10)
 
+        # 分割线
+        separator = ttk.Separator(paned_window, orient='vertical')
+        paned_window.add(separator)
+
         # B Part: Site Spider frame
         site_spider_frame = tk.Frame(paned_window)
         paned_window.add(site_spider_frame, weight=1)
 
-        site_spider_label = tk.Label(site_spider_frame, text='Site Spider')
+        site_spider_label = tk.Label(site_spider_frame, text='Site Spider', font=('TkDefaultFont', 14, 'bold'))
         site_spider_label.pack(side='top', padx=10, pady=10)
 
-        site_keyword_label = tk.Label(site_spider_frame, text='Keywords:')
-        site_keyword_label.pack(side='top', padx=10, pady=10)
+        site_keyword_label = tk.Label(site_spider_frame, text='Keywords:', anchor='w')
+        site_keyword_label.pack(side='top', padx=10, pady=10, anchor='w')
 
         # New frame for keyword entry and buttons
         site_keyword_entry_frame = tk.Frame(site_spider_frame)
         site_keyword_entry_frame.pack(side='top', padx=10, pady=10)
 
         site_keyword_entry = ttk.Entry(site_keyword_entry_frame, width=30)
-        site_keyword_entry.pack(side='left', padx=10, pady=10)
+        site_keyword_entry.pack(side='left', padx=10, pady=10, anchor='w')
         self.site_keyword_entry = site_keyword_entry
 
         add_site_keyword_button = tk.Button(site_keyword_entry_frame, text='Add', command=self.on_add_site_keyword,
@@ -83,10 +95,10 @@ class GUI:
         remove_site_keyword_button.pack(side='left', padx=5)
 
         self.site_keyword_listbox = tk.Listbox(site_spider_frame, width=30)
-        self.site_keyword_listbox.pack(side='top', padx=10)
+        self.site_keyword_listbox.pack(side='top', padx=10, anchor='w')
 
         url_label = tk.Label(site_spider_frame, text='URLs:')
-        url_label.pack(side='top', padx=10, pady=10)
+        url_label.pack(side='top', padx=10, pady=10, anchor='w')
 
         # New frame for URL entry and buttons
         url_entry_frame = tk.Frame(site_spider_frame)
@@ -103,7 +115,7 @@ class GUI:
         remove_url_button.pack(side='left', padx=5)
 
         self.url_listbox = tk.Listbox(site_spider_frame, width=30)
-        self.url_listbox.pack(side='top', padx=10)
+        self.url_listbox.pack(side='top', padx=10, anchor='w')
 
         run_site_button = tk.Button(site_spider_frame, text='Run Site Spider', command=self.on_start_site, bg="white",
                                     fg="black", width=20,
@@ -115,7 +127,7 @@ class GUI:
         paned_window.add(log_frame, weight=1)
 
         log_label = tk.Label(log_frame, text='Log:')
-        log_label.pack(side='top', padx=10, pady=10)
+        log_label.pack(side='top', padx=10, pady=10, anchor='w')
 
         self.log_text = tk.Text(log_frame, wrap='word', state='disabled')
         self.log_text.pack(side='top', padx=10, pady=10, fill='both', expand=True)
@@ -170,10 +182,17 @@ class GUI:
             self.site_keyword_listbox.delete(index)
 
     def on_start_google(self):
-        pass
+        # 示例
+        api_key = ''
+        cse_id = ''
+        query = '男人'
+
+        urls = search_google(api_key, cse_id, query, page=2)
+        print(urls)
 
     def on_start_site(self):
         pass
+
 
 if __name__ == '__main__':
     gui = GUI()

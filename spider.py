@@ -1,3 +1,4 @@
+import json
 from concurrent.futures import ThreadPoolExecutor
 
 import requests
@@ -62,3 +63,13 @@ class Spider:
             if re.search(keyword, text, re.IGNORECASE):
                 with self.lock:
                     self.results.setdefault(url, []).append(keyword)
+
+
+def search_google(api_key, cse_id, query, page=1):
+    for i in range(page):
+        url = f"https://www.googleapis.com/customsearch/v1?key={api_key}&cx={cse_id}&q={query}&start={i}"
+        print(url)
+        response = requests.get(url)
+        results = json.loads(response.text)
+        urls = [item['link'] for item in results['items']]
+        return urls
