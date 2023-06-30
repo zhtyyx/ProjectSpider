@@ -30,9 +30,13 @@ class GUI:
                                height=2)
         run_button.pack(side='left', padx=10)
 
+        # PanedWindow for three modules
+        paned_window = ttk.PanedWindow(self.window, orient='horizontal')
+        paned_window.pack(side='top', fill='both', expand=True)
+
         # A Part: Keyword frame
-        keyword_frame = tk.Frame(self.window)
-        keyword_frame.pack(side='left', padx=10, pady=10)
+        keyword_frame = tk.Frame(paned_window)
+        paned_window.add(keyword_frame, weight=1)
 
         keyword_label = tk.Label(keyword_frame, text='Keywords:')
         keyword_label.pack(side='top', padx=10, pady=10)
@@ -55,8 +59,8 @@ class GUI:
         remove_keyword_button.pack(side='left', padx=5)
 
         # B Part: URL frame
-        url_frame = tk.Frame(self.window)
-        url_frame.pack(side='left', padx=10, pady=10)
+        url_frame = tk.Frame(paned_window)
+        paned_window.add(url_frame, weight=1)
 
         url_label = tk.Label(url_frame, text='URLs:')
         url_label.pack(side='top', padx=10, pady=10)
@@ -66,6 +70,7 @@ class GUI:
 
         # New frame for URL entry and buttons
         url_entry_frame = tk.Frame(url_frame)
+
         url_entry_frame.pack(side='top', padx=10, pady=10)
 
         url_entry = ttk.Entry(url_entry_frame, width=30)
@@ -79,14 +84,14 @@ class GUI:
         remove_url_button.pack(side='left', padx=5)
 
         # C Part: Log display box
-        log_frame = tk.Frame(self.window)
-        log_frame.pack(side='top', padx=10, pady=10, fill='both', expand=True)
+        log_frame = tk.Frame(paned_window)
+        paned_window.add(log_frame, weight=1)
 
         log_label = tk.Label(log_frame, text='Log:')
         log_label.pack(side='top', padx=10, pady=10)
 
-        self.log_text = tk.Text(log_frame, wrap='word', width=30, height=10, state='disabled')
-        self.log_text.pack(side='top', padx=10, pady=10, fill='both', expand=True)
+        self.log_text = tk.Text(log_frame, wrap='word', state='disabled')
+        self.log_text.pack(side='top', padx=10, pady=10, fill='both')
 
         # Set default URL and keyword
         url_entry.insert(0, 'https://www.example.com')
