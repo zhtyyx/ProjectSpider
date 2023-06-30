@@ -1,9 +1,5 @@
-import logging
-import time
 import tkinter as tk
-from tkinter import messagebox, ttk
-
-from concurrent.futures import ThreadPoolExecutor
+from tkinter import ttk
 
 from spider import Spider
 
@@ -17,35 +13,22 @@ class GUI:
         self.window.title('Spider')
         self.window.geometry('1800x600')
 
-        # Top area frame
-        top_area_frame = tk.Frame(self.window)
-        top_area_frame.pack(side='top', padx=10, pady=10)
-
-        # System time label
-        self.system_time_label = tk.Label(top_area_frame, text='')
-        self.system_time_label.pack(side='left')
-
-        # Run button
-        run_button = tk.Button(top_area_frame, text='Run', command=self.on_start, bg="white", fg="black", width=10,
-                               height=2)
-        run_button.pack(side='left', padx=10)
-
         # PanedWindow for three modules
         paned_window = ttk.PanedWindow(self.window, orient='horizontal')
         paned_window.pack(side='top', fill='both', expand=True)
 
-        # A Part: Keyword frame
-        keyword_frame = tk.Frame(paned_window)
-        paned_window.add(keyword_frame, weight=1)
+        # A Part: Google Spider frame
+        google_spider_frame = tk.Frame(paned_window)
+        paned_window.add(google_spider_frame, weight=1)
 
-        keyword_label = tk.Label(keyword_frame, text='Keywords:')
+        google_spider_label = tk.Label(google_spider_frame, text='Google Spider')
+        google_spider_label.pack(side='top', padx=10, pady=10)
+
+        keyword_label = tk.Label(google_spider_frame, text='Keywords:')
         keyword_label.pack(side='top', padx=10, pady=10)
 
-        self.keyword_listbox = tk.Listbox(keyword_frame, width=30)
-        self.keyword_listbox.pack(side='top', padx=10)
-
         # New frame for keyword entry and buttons
-        keyword_entry_frame = tk.Frame(keyword_frame)
+        keyword_entry_frame = tk.Frame(google_spider_frame)
         keyword_entry_frame.pack(side='top', padx=10, pady=10)
 
         keyword_entry = ttk.Entry(keyword_entry_frame, width=30)
@@ -58,19 +41,55 @@ class GUI:
         remove_keyword_button = tk.Button(keyword_entry_frame, text='Remove', command=self.on_remove_keyword, width=10)
         remove_keyword_button.pack(side='left', padx=5)
 
-        # B Part: URL frame
-        url_frame = tk.Frame(paned_window)
-        paned_window.add(url_frame, weight=1)
+        self.keyword_listbox = tk.Listbox(google_spider_frame, width=30)
+        self.keyword_listbox.pack(side='top', padx=10)
 
-        url_label = tk.Label(url_frame, text='URLs:')
+        page_label = tk.Label(google_spider_frame, text='Pages:')
+        page_label.pack(side='top', padx=10, pady=10)
+
+        page_entry = ttk.Entry(google_spider_frame, width=30)
+        page_entry.pack(side='top', padx=10, pady=10)
+        self.page_entry = page_entry
+
+        run_google_button = tk.Button(google_spider_frame, text='Run Google Spider', command=self.on_start_google,
+                                      bg="white", fg="black", width=20,
+                                      height=2)
+        run_google_button.pack(side='bottom', padx=10)
+
+        # B Part: Site Spider frame
+        site_spider_frame = tk.Frame(paned_window)
+        paned_window.add(site_spider_frame, weight=1)
+
+        site_spider_label = tk.Label(site_spider_frame, text='Site Spider')
+        site_spider_label.pack(side='top', padx=10, pady=10)
+
+        site_keyword_label = tk.Label(site_spider_frame, text='Keywords:')
+        site_keyword_label.pack(side='top', padx=10, pady=10)
+
+        # New frame for keyword entry and buttons
+        site_keyword_entry_frame = tk.Frame(site_spider_frame)
+        site_keyword_entry_frame.pack(side='top', padx=10, pady=10)
+
+        site_keyword_entry = ttk.Entry(site_keyword_entry_frame, width=30)
+        site_keyword_entry.pack(side='left', padx=10, pady=10)
+        self.site_keyword_entry = site_keyword_entry
+
+        add_site_keyword_button = tk.Button(site_keyword_entry_frame, text='Add', command=self.on_add_site_keyword,
+                                            width=10)
+        add_site_keyword_button.pack(side='left', padx=5)
+
+        remove_site_keyword_button = tk.Button(site_keyword_entry_frame, text='Remove',
+                                               command=self.on_remove_site_keyword, width=10)
+        remove_site_keyword_button.pack(side='left', padx=5)
+
+        self.site_keyword_listbox = tk.Listbox(site_spider_frame, width=30)
+        self.site_keyword_listbox.pack(side='top', padx=10)
+
+        url_label = tk.Label(site_spider_frame, text='URLs:')
         url_label.pack(side='top', padx=10, pady=10)
 
-        self.url_listbox = tk.Listbox(url_frame, width=30)
-        self.url_listbox.pack(side='top', padx=10)
-
         # New frame for URL entry and buttons
-        url_entry_frame = tk.Frame(url_frame)
-
+        url_entry_frame = tk.Frame(site_spider_frame)
         url_entry_frame.pack(side='top', padx=10, pady=10)
 
         url_entry = ttk.Entry(url_entry_frame, width=30)
@@ -83,6 +102,14 @@ class GUI:
         remove_url_button = tk.Button(url_entry_frame, text='Remove', command=self.on_remove_url, width=10)
         remove_url_button.pack(side='left', padx=5)
 
+        self.url_listbox = tk.Listbox(site_spider_frame, width=30)
+        self.url_listbox.pack(side='top', padx=10)
+
+        run_site_button = tk.Button(site_spider_frame, text='Run Site Spider', command=self.on_start_site, bg="white",
+                                    fg="black", width=20,
+                                    height=2)
+        run_site_button.pack(side='bottom', padx=10)
+
         # C Part: Log display box
         log_frame = tk.Frame(paned_window)
         paned_window.add(log_frame, weight=1)
@@ -91,20 +118,14 @@ class GUI:
         log_label.pack(side='top', padx=10, pady=10)
 
         self.log_text = tk.Text(log_frame, wrap='word', state='disabled')
-        self.log_text.pack(side='top', padx=10, pady=10, fill='both')
+        self.log_text.pack(side='top', padx=10, pady=10, fill='both', expand=True)
 
         # Set default URL and keyword
         url_entry.insert(0, 'https://www.example.com')
         keyword_entry.insert(0, 'example')
 
     def run(self):
-        self.update_system_time()
         self.window.mainloop()
-
-    def update_system_time(self):
-        current_time = time.strftime('%Y-%m-%d %H:%M:%S')
-        self.system_time_label.config(text=f'System Time: {current_time}')
-        self.window.after(1000, self.update_system_time)
 
     def on_add_url(self):
         url = self.url_entry.get()
@@ -134,31 +155,26 @@ class GUI:
             self.spider.keywords.remove(keyword)
             self.keyword_listbox.delete(index)
 
-    def on_start(self):
-        if not self.spider.urls:
-            messagebox.showerror('Error', 'Please add at least one URL')
-            return
-        if not self.spider.keywords:
-            messagebox.showerror('Error', 'Please add at least one keyword')
-            return
+    def on_add_site_keyword(self):
+        keyword = self.site_keyword_entry.get()
+        if keyword not in self.spider.keywords:
+            self.spider.keywords.append(keyword)
+            self.site_keyword_listbox.insert('end', keyword)
 
-        # Clear results and logs
-        self.spider.results = {}
-        self.log_text.delete('1.0', 'end')
+    def on_remove_site_keyword(self):
+        selected = self.site_keyword_listbox.curselection()
+        if selected:
+            index = selected[0]
+            keyword = self.site_keyword_listbox.get(index)
+            self.spider.keywords.remove(keyword)
+            self.site_keyword_listbox.delete(index)
 
-        # Start spider
-        with ThreadPoolExecutor(max_workers=1) as executor:
-            executor.submit(self.spider.start)
+    def on_start_google(self):
+        pass
 
-        # Update log display
-        logging.basicConfig(level=logging.INFO, stream=self.log_text)
-
-    def on_stop(self):
-        self.spider.stop_event.set()
-        logging.info('Spider stopped')
-
+    def on_start_site(self):
+        pass
 
 if __name__ == '__main__':
     gui = GUI()
     gui.run()
- 
