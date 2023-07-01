@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk, font
 
 from spider import Spider, search_google
+from utils import get_html, save_to_file, sanitize_filename
 
 
 # User interface class
@@ -31,6 +32,7 @@ class GUI:
 
         search_word_entry = ttk.Entry(google_spider_frame, width=30)
         search_word_entry.pack(side='top', padx=10, pady=10, anchor='w')
+        self.search_word_entry = search_word_entry
 
         keyword_label = tk.Label(google_spider_frame, text='Keywords:', anchor='w')
         keyword_label.pack(side='top', padx=10, pady=10, fill='x')
@@ -183,12 +185,26 @@ class GUI:
 
     def on_start_google(self):
         # 示例
-        api_key = ''
-        cse_id = ''
-        query = '男人'
+        api_key = 'AIzaSyAp_sCxfWFQDaPePlXynuwWZ6B6O-po5xg'
+        cse_id = 'a55272e9ae1ae4076'
+        # 获取 Search Word 的值
+        search_word = self.search_word_entry.get()
 
-        urls = search_google(api_key, cse_id, query, page=2)
-        print(urls)
+        # 获取 Keywords 的值
+        keywords = [self.keyword_listbox.get(i) for i in self.keyword_listbox.curselection()]
+
+        # 获取 Pages 的值
+        pages = self.page_entry.get()
+
+        urls = search_google(api_key, cse_id, search_word, pages)
+        for i, url in enumerate(urls):
+            html = get_html(url)
+
+            filename = f'{url}.html'
+            filename = sanitize_filename(filename)
+            save_to_file(filename, html)
+
+
 
     def on_start_site(self):
         pass

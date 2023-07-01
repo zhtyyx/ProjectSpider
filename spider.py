@@ -66,7 +66,9 @@ class Spider:
 
 
 def search_google(api_key, cse_id, query, page=1):
-    for i in range(page):
+    if not page:
+        page = 1
+    for i in range(int(page)):
         url = f"https://www.googleapis.com/customsearch/v1?key={api_key}&cx={cse_id}&q={query}&start={i}"
         print(url)
         response = requests.get(url)
