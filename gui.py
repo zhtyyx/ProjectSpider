@@ -28,7 +28,6 @@ class GUI:
         self.window = tk.Tk()
         self.window.title('Spider')
         self.window.geometry('1500x800')
-        sys.stdout = TextRedirector(self.log)
         # 设置默认字体大小
         default_font = font.nametofont("TkDefaultFont")
         default_font.configure(size=int(default_font.cget("size") * 1.2))
@@ -150,9 +149,7 @@ class GUI:
         self.log_text = tk.Text(log_frame, wrap='word', state='disabled')
         self.log_text.pack(side='top', padx=10, pady=10, fill='both', expand=True)
 
-        # Set default URL and keyword
-        url_entry.insert(0, 'https://www.example.com')
-        keyword_entry.insert(0, 'example')
+        sys.stdout = TextRedirector(self.log_text)
 
     def run(self):
         self.window.mainloop()
@@ -223,7 +220,18 @@ class GUI:
             save_to_file(filename, html)
 
     def on_start_site(self):
-        pass
+        # 获取 Keywords 的值
+        keywords = [self.keyword_listbox.get(i) for i in self.keyword_listbox.curselection()]
+        urls = [self.url_listbox.get(i) for i in self.url_listbox.curselection()]
+
+        for i, url in enumerate(urls):
+            html = get_html(url)
+            for keyword in keywords:
+                if keyword in html:
+                    print("{} found in link: {}".format(keyword, url))
+            filename = f'{url}.html'
+            filename = sanitize_filename(filename)
+            save_to_file(filename, html)
 
 
 if __name__ == '__main__':
