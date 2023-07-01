@@ -9,7 +9,7 @@ def get_html(url):
 
 def save_to_file(filename, html):
     try:
-        with open("output\\" + filename, 'w', encoding="utf-8") as f:
+        with open("google_output\\" + filename, 'w', encoding="utf-8") as f:
             f.write(html)
     except Exception as e:
         print(e)
