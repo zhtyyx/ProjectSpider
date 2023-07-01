@@ -199,7 +199,9 @@ class GUI:
         urls = search_google(api_key, cse_id, search_word, pages)
         for i, url in enumerate(urls):
             html = get_html(url)
-
+            for keyword in keywords:
+                if keyword in html:
+                    print("{} found in link: {}".format(keyword, url))
             filename = f'{url}.html'
             filename = sanitize_filename(filename)
             save_to_file(filename, html)
