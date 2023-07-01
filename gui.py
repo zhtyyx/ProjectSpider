@@ -1,8 +1,23 @@
+import sys
 import tkinter as tk
 from tkinter import ttk, font
 
 from spider import Spider, search_google
 from utils import get_html, save_to_file, sanitize_filename
+
+
+class TextRedirector:
+    def __init__(self, widget):
+        self.widget = widget
+
+    def write(self, text):
+        self.widget.configure(state='normal')
+        self.widget.insert('end', text)
+        self.widget.see('end')
+        self.widget.configure(state='disabled')
+
+    def flush(self):
+        pass
 
 
 # User interface class
@@ -13,6 +28,7 @@ class GUI:
         self.window = tk.Tk()
         self.window.title('Spider')
         self.window.geometry('1500x800')
+        sys.stdout = TextRedirector(self.log)
         # 设置默认字体大小
         default_font = font.nametofont("TkDefaultFont")
         default_font.configure(size=int(default_font.cget("size") * 1.2))
@@ -205,8 +221,6 @@ class GUI:
             filename = f'{url}.html'
             filename = sanitize_filename(filename)
             save_to_file(filename, html)
-
-
 
     def on_start_site(self):
         pass
